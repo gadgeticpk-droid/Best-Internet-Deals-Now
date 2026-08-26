@@ -1387,8 +1387,10 @@ section.alt {
   /* backdrop-filter on .site-header creates a new containing block for
      position:fixed descendants, which traps #primary-nav's fixed panel
      inside the header's own box instead of the viewport. Suspend the
-     filter only while the mobile panel is open so it renders correctly. */
-  .site-header:has(.primary-nav.is-open) {
+     filter only while the mobile panel is open so it renders correctly.
+     Driven by body.nav-open (already toggled by js/main.js) instead of
+     :has() so it works in every browser, not just ones supporting :has(). */
+  body.nav-open .site-header {
     backdrop-filter: none;
   }
 
