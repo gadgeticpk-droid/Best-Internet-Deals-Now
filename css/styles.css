@@ -1384,6 +1384,14 @@ section.alt {
     display: flex;
   }
 
+  /* backdrop-filter on .site-header creates a new containing block for
+     position:fixed descendants, which traps #primary-nav's fixed panel
+     inside the header's own box instead of the viewport. Suspend the
+     filter only while the mobile panel is open so it renders correctly. */
+  .site-header:has(.primary-nav.is-open) {
+    backdrop-filter: none;
+  }
+
   .primary-nav {
     position: fixed;
     inset: var(--header-height) 0 0 0;
