@@ -398,6 +398,14 @@ h3 {
   justify-content: flex-end;
 }
 
+/* Desktop: the wrapper added for the mobile off-canvas panel (see the
+   max-width:760px rules) must stay invisible to layout here, so
+   .nav-links and .nav-cta remain direct flex children of .primary-nav
+   exactly as before. */
+.primary-nav-panel {
+  display: contents;
+}
+
 .nav-links {
   display: flex;
   align-items: center;
@@ -1413,10 +1421,36 @@ section.alt {
     overflow: hidden;
   }
 
+  /* #primary-nav is the fixed, viewport-clipped shell: its own box always
+     stays within inset(header-height,0,0,0) — i.e. never wider or taller
+     than the viewport — so it can't inflate the page's layout width the
+     way a translated fixed box can (see .primary-nav-panel below). It
+     stays present (not display:none) so its child panel can still be
+     measured/animated; pointer-events is disabled while closed so this
+     full-area shell doesn't block taps on the page underneath it. */
   .primary-nav {
+    display: block;
     position: fixed;
     inset: var(--header-height) 0 0 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .primary-nav.is-open {
+    pointer-events: auto;
+  }
+
+  /* The actual sliding panel. Its parent (#primary-nav) clips it to the
+     viewport bounds at all times, so even mid-transition or while closed
+     (transform: translateX(100%)) this panel's post-transform geometry
+     can never be measured by the browser as extending past the viewport
+     — which a translated position:fixed box does when nothing clips it,
+     and is what caused mobile browsers to treat the page as wider than
+     the viewport and zoom/shift it, revealing blank space on the right. */
+  .primary-nav-panel {
+    height: 100%;
     background: var(--color-surface);
+    display: flex;
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
@@ -1429,7 +1463,7 @@ section.alt {
     transition: transform 0.25s ease;
   }
 
-  .primary-nav.is-open {
+  .primary-nav.is-open .primary-nav-panel {
     transform: translateX(0);
   }
 
@@ -1496,6 +1530,8 @@ section.alt {
     left: 0;
     right: 0;
     bottom: 0;
+    width: 100%;
+    max-width: 100vw;
     z-index: 400;
     align-items: center;
     justify-content: center;
@@ -1505,6 +1541,15 @@ section.alt {
     color: #fff;
     font-weight: 700;
     box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.2);
+  }
+
+  .mobile-call-bar svg {
+    flex-shrink: 0;
+  }
+
+  .mobile-call-bar a {
+    min-width: 0;
+    overflow-wrap: anywhere;
   }
 
   body {
