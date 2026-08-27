@@ -392,18 +392,22 @@ h3 {
 
 .primary-nav {
   display: flex;
+  flex: 1;
+}
+
+/* Desktop: the wrapper added for the mobile off-canvas panel (see the
+   max-width:760px rules) reproduces the original .primary-nav flex
+   layout itself, so .nav-links and .nav-cta line up exactly as before.
+   (display:contents was tried here first but some browsers don't
+   reliably promote a display:contents wrapper's children into flex
+   items, which dropped .nav-cta out of the header row — plain nested
+   flexbox avoids that entirely.) */
+.primary-nav-panel {
+  display: flex;
   align-items: center;
   gap: 28px;
   flex: 1;
   justify-content: flex-end;
-}
-
-/* Desktop: the wrapper added for the mobile off-canvas panel (see the
-   max-width:760px rules) must stay invisible to layout here, so
-   .nav-links and .nav-cta remain direct flex children of .primary-nav
-   exactly as before. */
-.primary-nav-panel {
-  display: contents;
 }
 
 .nav-links {
@@ -1427,12 +1431,20 @@ section.alt {
      way a translated fixed box can (see .primary-nav-panel below). It
      stays present (not display:none) so its child panel can still be
      measured/animated; pointer-events is disabled while closed so this
-     full-area shell doesn't block taps on the page underneath it. */
+     full-area shell doesn't block taps on the page underneath it.
+     .primary-nav-panel's own box still genuinely extends past the
+     viewport while closed (translateX(100%) on a real, static-position
+     element) — overflow:hidden here stops it from scrolling or painting
+     outside this box, but contain:layout+paint additionally guarantees
+     that geometry can never be considered by anything outside this
+     element (including a mobile browser's own viewport-fit sizing),
+     which plain overflow:hidden does not promise. */
   .primary-nav {
     display: block;
     position: fixed;
     inset: var(--header-height) 0 0 0;
     overflow: hidden;
+    contain: layout paint;
     pointer-events: none;
   }
 
