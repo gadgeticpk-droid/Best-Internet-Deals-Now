@@ -1380,6 +1380,17 @@ section.alt {
     --header-height: 68px;
   }
 
+  /* #primary-nav is position:fixed with left:0/right:0 (viewport width),
+     then translateX(100%) to sit off-canvas when closed. That still
+     extends the box past the viewport's right edge, and Chromium counts
+     it in the document's scrollable width even though it's fixed and
+     off-screen — producing a phantom horizontal scrollbar and a blank
+     strip on the right at every mobile size. Clip it here, scoped to the
+     only breakpoint where #primary-nav uses this off-canvas transform. */
+  html {
+    overflow-x: hidden;
+  }
+
   .nav-toggle {
     display: flex;
   }
